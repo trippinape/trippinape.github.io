@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trippin Ape Yacht Viewer</title>
+    <!-- Materialize CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 20px;
+        }
+
+        label {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        input {
+            margin-bottom: 10px;
+        }
+
+        #result {
+            margin-top: 20px;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .attributes {
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="header">Trippin Ape Yacht Club Viewer</h1>
+        <div class="row">
+            <div class="col s12 m6">
+                <label for="idInput">Enter ID:</label>
+                <input type="number" id="idInput" min="1" max="9999">
+                <button class="btn" onclick="searchById()">Search</button>
+            </div>
+        </div>
+
+        <div id="result"></div>
+    </div>
+
+    <!-- Materialize JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script>
+        function searchById() {
+            const idInput = document.getElementById('idInput');
+            const resultDiv = document.getElementById('result');
+
+            const id = idInput.value;
+
+            if (id) {
+                // Replace this path with the correct path to your data.json file
+                const jsonPath = 'data.json';
+
+                // Make a request to the data.json file
+                const xhr = new XMLHttpRequest();
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4 && xhr.status === 200) {
+                        const data = JSON.parse(xhr.responseText);
+
+                        // Display the result with Materialize CSS classes
+                        resultDiv.innerHTML = `
+                            <div class="card horizontal">
+                                <div class="card-image">
+                                    <img src="${data[id - 1].image}" alt="${data[id - 1].name}">
+                                </div>
+                                <div class="card-stacked">
+                                    <div class="card-content">
+                                        <h2 class="card-title">Result for ID ${id}</h2>
+                                        <div class="attributes">
+                                            <div>
+                                                <h6>Attributes:</h6>
+                                                <ul>${data[id - 1].attributes.map(attr => `<li><strong>${attr.trait_type}:</strong> ${attr.value}</li>`).join('')}</ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+
+                        // Initialize Materialize components (optional)
+                        M.AutoInit();
+                    }
+                };
+                xhr.open('GET', jsonPath, true);
+                xhr.send();
+            } else {
+                resultDiv.innerHTML = '<p>Please enter an ID.</p>';
+            }
+        }
+    </script>
+</body>
+</html>

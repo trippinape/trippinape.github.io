@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trippin Ape Yacht Viewer</title>
+    
+    <!-- Bulma CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+
+    <!-- Your Stylesheet (if needed) -->
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 20px;
+        }
+
+        label {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        input {
+            margin-bottom: 10px;
+        }
+
+        #result {
+            margin-top: 20px;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .card {
+            display: flex;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-top: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-image {
+            flex: 30%;
+            height: auto;
+        }
+
+        .card-image img {
+            width: 100%;
+            height: auto;
+        }
+
+        .card-stacked {
+            flex: 70%;
+            padding: 20px;
+        }
+
+        .card-title {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .attributes {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .attributes h6 {
+            margin-bottom: 10px;
+        }
+
+        .attributes ul {
+            padding: 0;
+            margin: 0;
+            list-style: none;
+        }
+
+        .attributes li {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="#">
+        Home
+      </a>
+    </div>
+    <div id="navbarBasicExample" class="navbar-menu">
+      <div class="navbar-start">
+        <a class="navbar-item" href="about">
+          About
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="container">
+    <!-- Search Form -->
+    <div class="columns">
+      <div class="column is-half">
+        <label for="idInput">Enter ID:</label>
+        <input type="number" id="idInput" min="1" max="9999" class="input">
+        <button class="button is-primary" onclick="searchById()">Search</button>
+      </div>
+    </div>
+
+    <!-- Search Results -->
+    <div id="result"></div>
+  </div>
+
+  <!-- Bulma JavaScript (Optional) -->
+  <script defer src="https://cdn.jsdelivr.net/npm/bulma@0.9.3/js/bulma.min.js"></script>
+
+  <!-- User-Defined JavaScript Functions -->
+  <script>
+    /**
+     * Searches for results based on user-entered ID and displays them.
+     */
+    function searchById() {
+      const idInput = document.getElementById('idInput');
+      const resultDiv = document.getElementById('result');
+
+      const id = idInput.value;
+
+      if (id) {
+        // Replace this path with the correct path to your data.json file
+        const jsonPath = 'data.json';
+
+        // Make a request to the data.json file
+        const xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === 4 && xhr.status === 200) {
+            const data = JSON.parse(xhr.responseText);
+
+            // Display the result with Bulma CSS classes
+            resultDiv.innerHTML = `
+              <div class="card">
+                <div class="card-image">
+                  <img src="${data[id - 1].image}" alt="${data[id - 1].name}">
+                </div>
+                <div class="card-stacked">
+                  <div class="card-content">
+                    <h2 class="card-title">Result for ID ${id}</h2>
+                    <div class="attributes">
+                      <div>
+                        <h6>Attributes:</h6>
+                        <ul>${data[id - 1].attributes.map(attr => `<li><strong>${attr.trait_type}:</strong> ${attr.value}</li>`).join('')}</ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            `;
+
+            // Initialize Bulma components (optional)
+            bulmaCarousel.attach(); // If you have Bulma Carousel, otherwise remove this line
+          }
+        };
+        xhr.open('GET', jsonPath, true);
+        xhr.send();
+      } else {
+        resultDiv.innerHTML = '<p>Please enter an ID.</p>';
+      }
+    }
+  </script>
+</body>
+</html>
